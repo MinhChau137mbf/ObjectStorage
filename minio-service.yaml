@@ -1,0 +1,38 @@
+kind: Service
+apiVersion: v1
+metadata:
+  # This name uniquely identifies the service
+  name: minio-service
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 9090
+      targetPort: 9000
+      protocol: TCP
+    - name: console
+      port: 9443
+      targetPort: 9001
+      protocol: TCP
+  selector:
+    # Looks for labels `app:minio` in the namespace and applies the spec
+    app: minio
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: minio-svc
+  labels:
+    app: minio
+spec:
+  selector:
+    app: minio
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - name: http
+      port: 9000
+    - name: console
+      port: 9001
